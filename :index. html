@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Setup for Google Search -->
+    <meta name="description" content="Project Swachh Saathi by Team NEVA (PM SHRI KV Pangode). A smart waste management system featuring IoT Traceability, Bio-Safety, and Circular Economy for Viksit Bharat Buildathon 2025.">
+    <meta name="keywords" content="Swachh Saathi, Team NEVA, Waste Management, VBB 2025, KV Pangode, Smart City Project, Bio-Enzymes, Kashinadh Renjith S, Ambadikashi">
+    <meta name="author" content="Team NEVA">
+    <meta name="robots" content="index, follow">
+
+    <title>Project Swachh Saathi: Dignified Waste Management - Team NEVA</title>
+    
+    <!-- Fonts & Tools -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; color: #1f2937; }
+        p { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #059669; border-radius: 4px; }
+        
+        /* Chat & Animations */
+        .message-bubble { max-width: 85%; margin-bottom: 12px; padding: 12px 16px; border-radius: 20px; font-size: 0.95rem; line-height: 1.5; }
+        .user-msg { background-color: #059669; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .ai-msg { background-color: #f3f4f6; color: #1f2937; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #e5e7eb; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-green': '#059669', 'accent-green': '#10b981', 'neva-blue': '#1e40af', 
+                        'project-red': '#dc2626', 'soft-gray': '#f3f4f6', 'dark-text': '#1f2937', 'yt-red': '#FF0000',
+                    }
+                }
+            }
+        }
+
+        // --- Gemini AI Logic ---
+        const apiKey = ""; // API Key placeholder
+        const model = "gemini-2.5-flash-preview-09-2025";
+
+        async function callGemini(prompt, systemInstruction = "") {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+            const payload = { contents: [{ parts: [{ text: prompt }] }], systemInstruction: { parts: [{ text: systemInstruction }] } };
+            try {
+                const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (response.ok) { const result = await response.json(); return result.candidates?.[0]?.content?.parts?.[0]?.text; }
+            } catch (err) {}
+            return "Saathi AI is currently offline. (Please check API Key setup)";
+        }
+
+        // --- Team Data ---
+        const teamData = {
+            "Kashinadh Renjith S": {
+                role: "Mastermind", id: "8C 8327", ytName: "𝗔𝗺𝗯𝗮𝗱𝗶𝗸𝗮𝘀𝗵𝗶 𝗼𝗳𝗳𝗶𝗰𝗶𝗮𝗹", ytHandle: "@Ambadikashi",
+                description: "CAPCUT PRO USER 💥<br><br>'Ambadikashi Official: Where creativity meets entertainment! Expect awesome edits, hilarious compilations, and more! Your support means a lot - please like, comment, and watch my videos multiple times to help me grow!'",
+                stats: { subs: "2.28K", videos: "123", views: "973,676", joined: "Oct 27, 2019" },
+                links: [
+                    { label: "Instagram", url: "https://instagram.com/amb.a.dikashi?igsh=MTN2bTFsMWw3anhjaw==" },
+                    { label: "YouTube", url: "https://youtube.com/@ambadikashyyyyyy?si=nM3BG8SI_oPsVqt8" },
+                    { label: "Telegram", url: "https://t.me/ambadikashiontelegram" },
+                    { label: "WhatsApp", url: "https://whatsapp.com/channel/0029Vb5RYa0FXUucLMgt9z3K" }
+                ], isMastermind: true
+            },
+            "Yashmita PS": { role: "Creative Visionary", id: "8C 8350", description: "The artistic force ensuring Swachh Saathi's visual impact and design.", links: [] },
+            "Abhirami S Nair": { role: "Idea Originator", id: "8C 8305", description: "The primary visionary who conceptualized the ecosystem.", links: [] },
+            "Abhinav Sanil": { role: "Core Architect", id: "8C 8304", description: "Strategic lead focusing on technical integration.", links: [] },
+            "Rishikesh R Nair": { role: "Logistics Officer", id: "8C 8335", description: "Ensures smooth operational flow of units.", links: [] }
+        };
+
+        // --- UI Functions ---
+        function showBio(name) {
+            const modal = document.getElementById('team-modal');
+            const content = document.getElementById('modal-content');
+            const data = teamData[name];
+            
+            if (data && data.isMastermind) {
+                content.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div><h3 class="text-2xl font-black text-neva-blue">${name}</h3><span class="bg-project-red text-white text-xs font-bold px-2 py-1 rounded">MASTERMIND</span></div>
+                            <button onclick="closeBio()" class="text-gray-400 hover:text-red-500 font-bold text-xl">✕</button>
+                        </div>
+                        <div class="bg-gray-50 border-2 border-primary-green/20 rounded-xl p-4 mb-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 bg-yt-red rounded-full flex items-center justify-center text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div>
+                                <div><h4 class="font-bold text-gray-800">${data.ytName}</h4><p class="text-xs text-gray-500">${data.ytHandle}</p></div>
+                            </div>
+                            <div class="grid grid-cols-4 gap-2 text-center text-xs font-bold text-gray-600 border-t pt-2">
+                                <div><span class="block text-lg text-black">${data.stats.subs}</span>Subs</div><div><span class="block text-lg text-black">${data.stats.videos}</span>Vids</div>
+                                <div><span class="block text-lg text-black">973K+</span>Views</div><div><span class="block text-lg text-black">2019</span>Joined</div>
+                            </div>
+                            <p class="mt-3 text-sm italic text-gray-700 bg-white p-2 rounded border">${data.description}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            ${data.links.map(l => `<a href="${l.url}" target="_blank" class="block text-center py-2 bg-gray-100 hover:bg-primary-green hover:text-white rounded font-bold text-xs transition">${l.label}</a>`).join('')}
+                        </div>
+                    </div>`;
+            } else {
+                content.innerHTML = `
+                    <div class="p-8">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-2xl font-black text-primary-green">${name}</h3>
+                            <button onclick="closeBio()" class="text-gray-400 hover:text-red-500 font-bold text-xl">✕</button>
+                        </div>
+                        <p class="text-lg text-gray-700 mb-4">${data ? data.description : 'Team Member'}</p>
+                        <span class="bg-accent-green/10 text-accent-green px-3 py-1 rounded-full text-sm font-bold">${data ? data.role : ''}</span>
+                        <p class="mt-4 text-sm text-gray-400 font-mono">ID: ${data ? data.id : ''}</p>
+                    </div>`;
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeBio() { document.getElementById('team-modal').classList.add('hidden'); }
+        function toggleDashboard() { document.getElementById('dashboard-modal').classList.toggle('hidden'); }
+        function toggleChat() { document.getElementById('ai-chat-window').classList.toggle('hidden'); }
+
+        async function sendAIMessage() {
+            const input = document.getElementById('ai-input');
+            const container = document.getElementById('chat-messages');
+            const text = input.value.trim();
+            if(!text) return;
+            container.innerHTML += `<div class="message-bubble user-msg">${text}</div>`;
+            input.value = '';
+            container.innerHTML += `<div class="message-bubble ai-msg italic" id="loading">Thinking...</div>`;
+            try {
+                const response = await callGemini(text, "You are Saathi AI. Explain Project Swachh Saathi's 3 pillars: Traceability, Bio-Safety, Circular Economy.");
+                document.getElementById('loading').remove();
+                container.innerHTML += `<div class="message-bubble ai-msg">${response}</div>`;
+            } catch(e) { document.getElementById('loading').innerText = "Error connecting."; }
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        async function quickPitch() {
+            const btn = document.getElementById('pitch-btn');
+            btn.innerText = "Generating...";
+            try {
+                const pitch = await callGemini("Summarize Project Swachh Saathi in 2 sentences.", "Pitch expert.");
+                alert("✨ AI Pitch: " + pitch);
+            } catch(e) { alert("AI unavailable."); }
+            btn.innerText = "✨ AI Pitch";
+        }
+    </script>
+</head>
+<body class="text-dark-text overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-gray-100">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl md:text-3xl font-black text-primary-green tracking-tighter">
+                Swachh<span class="text-accent-green">Saathi</span>
+            </a>
+            <div class="hidden md:flex space-x-6 items-center">
+                <a href="#about" class="nav-link text-sm font-bold text-gray-600 hover:text-primary-green transition">About</a>
+                <a href="#process" class="nav-link text-sm font-bold text-gray-600 hover:text-primary-green transition">Process</a>
+                <a href="#products" class="nav-link text-sm font-bold text-gray-600 hover:text-primary-green transition">Marketplace</a>
+                <a href="#team" class="nav-link text-sm font-bold text-gray-600 hover:text-primary-green transition">Team NEVA</a>
+                <button onclick="toggleDashboard()" class="bg-yellow-400 text-dark-text px-4 py-2 rounded-full font-bold text-xs uppercase shadow-md hover:bg-yellow-500 transition">Dashboard</button>
+                <button id="pitch-btn" onclick="quickPitch()" class="bg-neva-blue text-white px-4 py-2 rounded-full font-bold text-xs uppercase shadow-md hover:bg-blue-800 transition">✨ AI Pitch</button>
+            </div>
+            <!-- Mobile Menu Toggle -->
+            <button class="md:hidden text-gray-600" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t p-4 space-y-3 shadow-xl">
+            <a href="#about" class="block font-bold text-gray-600">About</a>
+            <a href="#team" class="block font-bold text-gray-600">Team</a>
+            <button onclick="toggleDashboard()" class="block w-full text-left font-bold text-yellow-600">Dashboard</button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="pt-24 pb-20 bg-white relative overflow-hidden text-center">
+        <div class="absolute inset-0 -z-10 h-full w-full bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem] opacity-50"></div>
+        <div class="max-w-7xl mx-auto px-4 fade-in-up">
+            <span class="bg-primary-green/10 text-primary-green px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4 inline-block">Viksit Bharat Buildathon 2025</span>
+            <h1 class="text-5xl md:text-7xl font-black text-dark-text tracking-tight mb-6 leading-tight">
+                Project <span class="text-primary-green">Swachh Saathi</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-500 max-w-3xl mx-auto mb-10 font-medium">
+                Dignified, Tech-Driven Waste Management. <br>
+                Merging <strong>IoT Traceability</strong> with <strong>Bio-Safety</strong> for a cleaner India.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#about" class="bg-primary-green text-white px-10 py-4 rounded-full font-bold text-lg hover:scale-105 transition shadow-xl shadow-primary-green/30">Learn More</a>
+                <button onclick="toggleChat()" class="bg-white text-dark-text border-2 border-gray-200 px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-50 transition">Ask AI Assistant</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pillars / Abstract -->
+    <section id="about" class="py-20 bg-soft-gray">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-black mb-6 text-dark-text">The Vision</h2>
+                    <p class="text-lg text-gray-600 mb-6 leading-relaxed">
+                        Project Swachh Saathi addresses the critical gaps in India's waste ecosystem: specifically, the lack of <strong>traceability</strong> and <strong>bio-safety</strong>.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-center bg-white p-4 rounded-xl shadow-sm card-hover">
+                            <span class="bg-primary-green text-white p-2 rounded-lg mr-4">📡</span>
+                            <div><h4 class="font-bold">Traceability</h4><p class="text-xs text-gray-500">QR/NFC tracking from source to disposal.</p></div>
+                        </li>
+                        <li class="flex items-center bg-white p-4 rounded-xl shadow-sm card-hover">
+                            <span class="bg-accent-green text-white p-2 rounded-lg mr-4">🧬</span>
+                            <div><h4 class="font-bold">Bio-Safety</h4><p class="text-xs text-gray-500">C-BED Unit neutralizes hazards with bio-enzymes.</p></div>
+                        </li>
+                        <li class="flex items-center bg-white p-4 rounded-xl shadow-sm card-hover">
+                            <span class="bg-neva-blue text-white p-2 rounded-lg mr-4">🔄</span>
+                            <div><h4 class="font-bold">Circular Economy</h4><p class="text-xs text-gray-500">Promoting Banana Fibre biodegradable products.</p></div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white p-8 rounded-[2rem] shadow-2xl border-t-8 border-primary-green">
+                    <h3 class="text-xl font-bold mb-4">Tech Stack</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between border-b pb-2"><span class="font-medium text-gray-600">IoT</span> <span class="text-primary-green font-bold">QR & NFC Tags</span></div>
+                        <div class="flex justify-between border-b pb-2"><span class="font-medium text-gray-600">Mobile</span> <span class="text-primary-green font-bold">Citizen & Collector App</span></div>
+                        <div class="flex justify-between border-b pb-2"><span class="font-medium text-gray-600">Cloud</span> <span class="text-primary-green font-bold">Municipal Dashboard</span></div>
+                        <div class="flex justify-between"><span class="font-medium text-gray-600">Bio-Tech</span> <span class="text-primary-green font-bold">Enzymatic Pre-treatment</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process -->
+    <section id="process" class="py-24 bg-white">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-black mb-16">How It Works</h2>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+                <div class="max-w-xs relative">
+                    <div class="w-20 h-20 bg-primary-green text-white rounded-2xl flex items-center justify-center text-3xl font-black mx-auto mb-6 shadow-lg">1</div>
+                    <h3 class="text-xl font-bold mb-2">Scan & Verify</h3>
+                    <p class="text-gray-500 text-sm">Citizen scans QR code using the App.</p>
+                </div>
+                <div class="hidden md:block text-gray-300 text-4xl">➝</div>
+                <div class="max-w-xs relative">
+                    <div class="w-20 h-20 bg-accent-green text-white rounded-2xl flex items-center justify-center text-3xl font-black mx-auto mb-6 shadow-lg">2</div>
+                    <h3 class="text-xl font-bold mb-2">Data Logging</h3>
+                    <p class="text-gray-500 text-sm">Data sent to Municipal Dashboard.</p>
+                </div>
+                <div class="hidden md:block text-gray-300 text-4xl">➝</div>
+                <div class="max-w-xs relative">
+                    <div class="w-20 h-20 bg-neva-blue text-white rounded-2xl flex items-center justify-center text-3xl font-black mx-auto mb-6 shadow-lg">3</div>
+                    <h3 class="text-xl font-bold mb-2">Rewards</h3>
+                    <p class="text-gray-500 text-sm">Earn "Green Points" for eco-products.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marketplace -->
+    <section id="products" class="py-24 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-black mb-2">Eco-Marketplace</h2>
+                <p class="text-gray-500">Redeem your Green Points here.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 bg-gray-200"><img src="https://placehold.co/600x400/059669/ffffff?text=Banana+Fibre+Pads" class="object-cover w-full h-full"></div>
+                    <div class="p-6"><h3 class="font-bold text-lg mb-1">Banana Fibre Pads</h3><p class="text-xs text-gray-500 mb-4">Biodegradable</p><button class="w-full py-2 bg-yellow-400 font-bold text-sm rounded-lg hover:bg-yellow-500">500 Points</button></div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 bg-gray-200"><img src="https://placehold.co/600x400/10b981/ffffff?text=Compost+Bags" class="object-cover w-full h-full"></div>
+                    <div class="p-6"><h3 class="font-bold text-lg mb-1">Compost Bags</h3><p class="text-xs text-gray-500 mb-4">Plant-based</p><button class="w-full py-2 bg-yellow-400 font-bold text-sm rounded-lg hover:bg-yellow-500">100 Points</button></div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 bg-gray-200"><img src="https://placehold.co/600x400/1e40af/ffffff?text=Bamboo+Cutlery" class="object-cover w-full h-full"></div>
+                    <div class="p-6"><h3 class="font-bold text-lg mb-1">Bamboo Cutlery</h3><p class="text-xs text-gray-500 mb-4">Reusable</p><button class="w-full py-2 bg-yellow-400 font-bold text-sm rounded-lg hover:bg-yellow-500">600 Points</button></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="py-24 bg-white">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <h2 class="text-4xl font-black mb-16 tracking-tight text-dark-text">Meet Team NEVA</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-center">
+                <button onclick="showBio('Abhirami S Nair')" class="card-hover p-6 rounded-3xl bg-soft-gray border-b-4 border-primary-green">
+                    <h3 class="font-black text-primary-green text-lg">Abhirami</h3><p class="text-xs font-bold text-gray-400 mt-1">Idea Originator</p>
+                </button>
+                <button onclick="showBio('Abhinav Sanil')" class="card-hover p-6 rounded-3xl bg-soft-gray border-b-4 border-primary-green">
+                    <h3 class="font-black text-primary-green text-lg">Abhinav</h3><p class="text-xs font-bold text-gray-400 mt-1">Architect</p>
+                </button>
+                <button onclick="showBio('Kashinadh Renjith S')" class="card-hover p-6 rounded-3xl bg-primary-green border-b-8 border-yt-red shadow-xl relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h3 class="font-black text-white text-lg">Kashinadh</h3><p class="text-xs font-bold text-white/80 mt-1">Mastermind</p>
+                        <span class="block mt-2 text-[10px] bg-yt-red text-white px-2 py-1 rounded font-bold">YOUTUBER</span>
+                    </div>
+                </button>
+                <button onclick="showBio('Rishikesh R Nair')" class="card-hover p-6 rounded-3xl bg-soft-gray border-b-4 border-primary-green">
+                    <h3 class="font-black text-primary-green text-lg">Rishikesh</h3><p class="text-xs font-bold text-gray-400 mt-1">Logistics</p>
+                </button>
+                <button onclick="showBio('Yashmita PS')" class="card-hover p-6 rounded-3xl bg-soft-gray border-b-4 border-primary-green">
+                    <h3 class="font-black text-primary-green text-lg">Yashmita</h3><p class="text-xs font-bold text-gray-400 mt-1">Creative</p>
+                </button>
+            </div>
+            <div class="mt-12 text-sm text-gray-500 font-bold">PM SHRI Kendriya Vidyalaya Army Cantt., Pangode</div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="py-16 bg-gray-900 text-white">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-2xl font-bold mb-8">Transforming Waste Management</h2>
+            <div class="flex flex-col md:flex-row gap-8 justify-center items-center">
+                <div class="text-center">
+                    <p class="mb-4 text-gray-400">Schedule a Demo</p>
+                    <div class="calendly-inline-widget" data-url="https://calendly.com/d/ckq-qxq-sck/swachh-saathi-project-demo" style="min-width:300px;height:350px;"></div>
+                </div>
+                <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm">
+                    <form class="space-y-4">
+                        <input type="text" placeholder="Name" class="w-full p-3 rounded bg-gray-700 border-none text-white text-sm">
+                        <input type="email" placeholder="Email" class="w-full p-3 rounded bg-gray-700 border-none text-white text-sm">
+                        <button class="w-full py-3 bg-primary-green rounded font-bold hover:bg-green-600 transition">Contact Us</button>
+                    </form>
+                </div>
+            </div>
+            <p class="mt-12 text-xs text-gray-500">&copy; 2025 Project Swachh Saathi | Team NEVA</p>
+        </div>
+    </section>
+
+    <!-- Modals -->
+    <div id="team-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeBio()">
+        <div class="bg-white rounded-[2rem] shadow-2xl max-w-lg w-full overflow-hidden transform transition-all scale-100" id="modal-content" onclick="event.stopPropagation()"></div>
+    </div>
+
+    <div id="dashboard-modal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4" onclick="toggleDashboard()">
+        <div class="bg-white w-full max-w-4xl rounded-2xl p-8 relative" onclick="event.stopPropagation()">
+            <button onclick="toggleDashboard()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 font-bold text-xl">✕</button>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Municipal Dashboard (Live Demo)</h2>
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <div class="bg-green-50 p-4 rounded-xl border-l-4 border-green-500"><p class="text-xs text-gray-500">Total Logs</p><p class="text-2xl font-black text-green-600">1,482</p></div>
+                <div class="bg-yellow-50 p-4 rounded-xl border-l-4 border-yellow-500"><p class="text-xs text-gray-500">Hotspots</p><p class="text-2xl font-black text-yellow-600">Zone 3</p></div>
+                <div class="bg-blue-50 p-4 rounded-xl border-l-4 border-blue-500"><p class="text-xs text-gray-500">Efficiency</p><p class="text-2xl font-black text-blue-600">92%</p></div>
+            </div>
+            <div class="bg-gray-100 p-4 rounded-xl text-center mb-6"><p class="font-bold text-gray-600">C-BED Safety Status: <span class="text-green-600">NORMAL</span></p></div>
+            <table class="w-full text-sm text-left text-gray-500">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr><th class="px-4 py-3">ID</th><th class="px-4 py-3">Location</th><th class="px-4 py-3">Status</th></tr></thead>
+                <tbody><tr class="border-b"><td class="px-4 py-3">#SWA-101</td><td class="px-4 py-3">Main St. Bin</td><td class="px-4 py-3 text-green-600 font-bold">Cleared</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- AI Chat -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <div id="ai-chat-window" class="hidden bg-white w-80 rounded-2xl shadow-2xl border mb-4 overflow-hidden">
+            <div class="bg-primary-green text-white p-3 font-bold flex justify-between"><span>Saathi AI</span><button onclick="toggleChat()">✕</button></div>
+            <div id="chat-messages" class="h-64 p-3 overflow-y-auto bg-gray-50 text-sm"><div class="message-bubble ai-msg">Namaste! Ask me about Swachh Saathi.</div></div>
+            <div class="p-2 border-t flex"><input id="ai-input" class="flex-grow p-2 text-sm outline-none" placeholder="Type..." onkeypress="if(event.key==='Enter') sendAIMessage()"><button onclick="sendAIMessage()" class="text-primary-green font-bold px-2">➤</button></div>
+        </div>
+        <button onclick="toggleChat()" class="bg-primary-green text-white p-4 rounded-full shadow-lg hover:scale-110 transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg></button>
+    </div>
+
+</body>
+</html>
+
+
